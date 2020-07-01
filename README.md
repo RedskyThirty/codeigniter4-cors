@@ -1,7 +1,7 @@
 # CORS Middleware for CodeIgniter 4
 
 [![Software License][ico-license]](LICENSE.md)
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Total Downloads](https://img.shields.io/github/downloads/atom/atom/total.svg?style=flat)][link-downloads]
 
 Inspired on https://github.com/fruitcake/laravel-cors and  https://github.com/asm89/stack-cors
 
