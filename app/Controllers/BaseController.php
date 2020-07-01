@@ -46,9 +46,9 @@ class BaseController extends Controller
 		
 		// ---
 		
-		// Add the line below and the method "cors()"
+		// Add the line below and both methods "cors()" and "_cors()"
 		
-		$this->cors();
+		$this->_cors();
 	}
 	
 	
@@ -56,6 +56,18 @@ class BaseController extends Controller
 	 *
 	 */
 	public function cors(): void
+	{
+		/**
+		 * This method is only needed for the route "$routes->options('(:any)', 'BaseController::cors')".
+		 * As the route targets here, the private method "_cors()" will already be called from "initController()".
+		 */
+	}
+	
+	
+	/**
+	 *
+	 */
+	private function _cors(): void
 	{
 		$ciCORS = new CodeIgniterCORS();
 		$ciCORS->handle($this->request, $this->response);
