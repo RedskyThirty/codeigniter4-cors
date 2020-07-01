@@ -8,7 +8,7 @@ use Exception;
 /**
  * Class CodeIgniter CORS
  *
- * @author Manuel Piton <manu@redsky.be>
+ * @author Manuel Piton
  * @copyright Copyright 2020 Redsky Thirty
  * @version 1.0.0
  *

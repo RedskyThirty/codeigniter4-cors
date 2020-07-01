@@ -44,6 +44,10 @@ class BaseController extends Controller
 		// E.g.:
 		// $this->session = \Config\Services::session();
 		
+		// ---
+		
+		// Add the line below and the method "cors()"
+		
 		$this->cors();
 	}
 	

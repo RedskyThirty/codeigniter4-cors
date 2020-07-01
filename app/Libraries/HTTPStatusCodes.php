@@ -5,7 +5,7 @@
  *
  * Source: https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
  *
- * @author Manuel Piton <manu@redsky.be>
+ * @author Manuel Piton
  * @copyright Copyright 2019 Redsky Thirty
  * @version 1.0.0
  *
