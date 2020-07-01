@@ -8,6 +8,6 @@ Inspired on https://github.com/fruitcake/laravel-cors and  https://github.com/as
 
 The `CodeIgniterCORS` library allows you to send CORS [Cross-Origin Resource Sharing] headers with CodeIgniter 4 (https://github.com/codeigniter4/CodeIgniter4).  
 
-More info about Cross-Origin Resource Sharing:
+More info about Cross-Origin Resource Sharing:  
 http://enable-cors.org  
 https://developer.mozilla.org/en/docs/Web/HTTP/CORS
