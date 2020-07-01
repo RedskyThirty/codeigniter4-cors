@@ -11,3 +11,8 @@ The `CodeIgniterCORS` library allows you to send CORS [Cross-Origin Resource Sha
 More info about Cross-Origin Resource Sharing:  
 http://enable-cors.org  
 https://developer.mozilla.org/en/docs/Web/HTTP/CORS
+
+## Important
+
+I only tested this in a simple case.  
+Let me know if you notice any issue.
