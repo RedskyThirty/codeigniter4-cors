@@ -69,7 +69,7 @@ class CodeIgniterCORS
 		}
 		else
 		{
-			$origin = $request->getHeader('Origin'); // $_SERVER['HTTP_ORIGIN']
+			$origin = $_SERVER['HTTP_ORIGIN']; // $request->getHeader('Origin') ===> Doesn't work
 			
 			if (!empty($origin) && in_array($origin, $this->_requestConfig['allowed_origins']))
 			{
@@ -79,34 +79,28 @@ class CodeIgniterCORS
 			$origin = null;
 		}
 		
-		if ($response->hasHeader('Access-Control-Allow-Origin'))
+		if (!empty($this->_requestConfig['exposed_headers']))
 		{
-			if (!empty($this->_requestConfig['exposed_headers']))
-			{
-				$response->setHeader('Access-Control-Expose-Headers', implode(', ', $this->_requestConfig['exposed_headers']));
-			}
-			
-			if ($this->_requestConfig['supports_credentials'])
-			{
-				$response->setHeader('Access-Control-Allow-Credentials', 'true');
-			}
-			else
-			{
-				$response->setHeader('Access-Control-Allow-Credentials', 'false');
-			}
-			
-			$response->setHeader('Access-Control-Max-Age', $this->_requestConfig['max_age']);
+			$response->setHeader('Access-Control-Expose-Headers', implode(', ', $this->_requestConfig['exposed_headers']));
 		}
+		
+		if ($this->_requestConfig['supports_credentials'])
+		{
+			$response->setHeader('Access-Control-Allow-Credentials', 'true');
+		}
+		else
+		{
+			$response->setHeader('Access-Control-Allow-Credentials', 'false');
+		}
+		
+		$response->setHeader('Access-Control-Max-Age', $this->_requestConfig['max_age']);
 		
 		if ($this->_isPreflightRequest($request))
 		{
 			$response->setStatusCode(HTTPStatusCodes::NO_CONTENT);
 			
-			if ($response->hasHeader('Access-Control-Allow-Origin'))
-			{
-				$response->setHeader('Access-Control-Allow-Headers', implode(', ', $this->_requestConfig['allowed_headers']));
-				$response->setHeader('Access-Control-Allow-Methods', implode(', ', $this->_requestConfig['allowed_methods']));
-			}
+			$response->setHeader('Access-Control-Allow-Headers', implode(', ', $this->_requestConfig['allowed_headers']));
+			$response->setHeader('Access-Control-Allow-Methods', implode(', ', $this->_requestConfig['allowed_methods']));
 			
 			$response->sendHeaders();
 			
