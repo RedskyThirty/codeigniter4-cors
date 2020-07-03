@@ -10,12 +10,17 @@ use Exception;
  *
  * @author Manuel Piton
  * @copyright Copyright 2020 Redsky Thirty
- * @version 1.0.0
+ * @version 1.0.1
  *
  * @package App\Libraries\CodeIgniterCORS
  */
 class CodeIgniterCORS
 {
+	/**
+	 * @var bool
+	 */
+	private bool $_vanilla;
+	
 	/**
 	 * @var array|null
 	 */
@@ -34,10 +39,14 @@ class CodeIgniterCORS
 	/**
 	 * CodeIgniterCORS constructor.
 	 *
+	 * @param bool $vanilla
+	 *
 	 * @throws Exception
 	 */
-	public function __construct()
+	public function __construct(bool $vanilla = false)
 	{
+		$this->_vanilla = $vanilla;
+		
 		if (file_exists(__DIR__.'/Config/Config.php'))
 		{
 			$this->_config = include_once __DIR__.'/Config/Config.php';
@@ -53,8 +62,9 @@ class CodeIgniterCORS
 	/**
 	 * @param RequestInterface $request
 	 * @param ResponseInterface $response
+	 * @param bool $sendResponseHeaders
 	 */
-	public function handle(RequestInterface $request, ResponseInterface $response): void
+	public function handle(RequestInterface $request, ResponseInterface $response, bool $sendResponseHeaders = true): void
 	{
 		$this->_initRequestConfigWithPath($request->uri->getPath());
 		
@@ -65,15 +75,18 @@ class CodeIgniterCORS
 		
 		if ($this->_requestConfig['allowed_origins'][0] === '*')
 		{
-			$response->setHeader('Access-Control-Allow-Origin', '*');
+			if ($this->_vanilla) header('Access-Control-Allow-Origin: *');
+			else $response->setHeader('Access-Control-Allow-Origin', '*');
 		}
 		else
 		{
-			$origin = $_SERVER['HTTP_ORIGIN']; // $request->getHeader('Origin') ===> Doesn't work
+			if ($this->_vanilla) $origin = !empty($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : null;
+			else $origin = $request->getHeaderLine('Origin');
 			
 			if (!empty($origin) && in_array($origin, $this->_requestConfig['allowed_origins']))
 			{
-				$response->setHeader('Access-Control-Allow-Origin', $origin);
+				if ($this->_vanilla) header('Access-Control-Allow-Origin: '.$origin);
+				else $response->setHeader('Access-Control-Allow-Origin', $origin);
 			}
 			
 			$origin = null;
@@ -81,33 +94,46 @@ class CodeIgniterCORS
 		
 		if (!empty($this->_requestConfig['exposed_headers']))
 		{
-			$response->setHeader('Access-Control-Expose-Headers', implode(', ', $this->_requestConfig['exposed_headers']));
+			if ($this->_vanilla) header('Access-Control-Expose-Headers: '.implode(', ', $this->_requestConfig['exposed_headers']));
+			else $response->setHeader('Access-Control-Expose-Headers', implode(', ', $this->_requestConfig['exposed_headers']));
 		}
 		
 		if ($this->_requestConfig['supports_credentials'])
 		{
-			$response->setHeader('Access-Control-Allow-Credentials', 'true');
+			if ($this->_vanilla) header('Access-Control-Allow-Credentials: true');
+			else $response->setHeader('Access-Control-Allow-Credentials', 'true');
 		}
 		else
 		{
-			$response->setHeader('Access-Control-Allow-Credentials', 'false');
+			if ($this->_vanilla) header('Access-Control-Allow-Credentials: false');
+			else $response->setHeader('Access-Control-Allow-Credentials', 'false');
 		}
 		
-		$response->setHeader('Access-Control-Max-Age', $this->_requestConfig['max_age']);
+		if ($this->_vanilla) header('Access-Control-Max-Age: '.$this->_requestConfig['max_age']);
+		else $response->setHeader('Access-Control-Max-Age', $this->_requestConfig['max_age']);
 		
 		if ($this->_isPreflightRequest($request))
 		{
-			$response->setStatusCode(HTTPStatusCodes::NO_CONTENT);
-			
-			$response->setHeader('Access-Control-Allow-Headers', implode(', ', $this->_requestConfig['allowed_headers']));
-			$response->setHeader('Access-Control-Allow-Methods', implode(', ', $this->_requestConfig['allowed_methods']));
-			
-			$response->sendHeaders();
+			if ($this->_vanilla)
+			{
+				header('Access-Control-Allow-Headers: '.implode(', ', $this->_requestConfig['allowed_headers']));
+				header('Access-Control-Allow-Methods: '.implode(', ', $this->_requestConfig['allowed_methods']));
+			}
+			else
+			{
+				$response->setStatusCode(HTTPStatusCodes::NO_CONTENT);
+				
+				$response
+					->setHeader('Access-Control-Allow-Headers', implode(', ', $this->_requestConfig['allowed_headers']))
+					->setHeader('Access-Control-Allow-Methods', implode(', ', $this->_requestConfig['allowed_methods']));
+				
+				if ($sendResponseHeaders) $response->sendHeaders();
+			}
 			
 			exit();
 		}
 		
-		$response->sendHeaders();
+		if (!$this->_vanilla && $sendResponseHeaders) $response->sendHeaders();
 	}
 	
 	
@@ -121,8 +147,8 @@ class CodeIgniterCORS
 	private function _initRequestConfigWithPath(string $path): void
 	{
 		/**
-		 * Cette méthode-ci va chercher dans la config si
-		 * il y en a une qui match avec le path de la requête.
+		 * This method will look in the config if
+		 * there is one that matches the path of the request.
 		 */
 		
 		$explodedPath = explode('/', $path);
@@ -202,6 +228,13 @@ class CodeIgniterCORS
 	 */
 	private function _isPreflightRequest(RequestInterface $request): bool
 	{
-		return (($request->getMethod(true) === 'OPTIONS') && !empty($request->getHeader('Access-Control-Request-Method')));
+		if ($this->_vanilla)
+		{
+			return ((strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS') && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']));
+		}
+		else
+		{
+			return (($request->getMethod(true) === 'OPTIONS') && !empty($request->getHeader('Access-Control-Request-Method')));
+		}
 	}
 }

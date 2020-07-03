@@ -69,8 +69,26 @@ class BaseController extends Controller
 	 */
 	private function _cors(): void
 	{
+		// Use CI headers management and send headers
+		
 		$ciCORS = new CodeIgniterCORS();
 		$ciCORS->handle($this->request, $this->response);
+		
+		// Use CI headers management but don't send headers
+		// If you need to send headers yourself, set "false"
+		// otherwise they will not be sent.
+		
+		/*
+		$ciCORS = new CodeIgniterCORS();
+		$ciCORS->handle($this->request, $this->response, false);
+		*/
+		
+		// Use vanilla PHP to manage headers.
+		
+		/*
+		$ciCORS = new CodeIgniterCORS(true);
+		$ciCORS->handle($this->request, $this->response);
+		*/
 	}
 
 }
