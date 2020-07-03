@@ -1,6 +1,6 @@
 # CORS Middleware for CodeIgniter 4
 
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](LICENSE) [![GitHub Release](https://img.shields.io/github/release/tterb/PlayMusic.svg?style=flat)](v1.0.1)  
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](LICENSE)  
 
 Inspired on https://github.com/fruitcake/laravel-cors and  https://github.com/asm89/stack-cors
 
