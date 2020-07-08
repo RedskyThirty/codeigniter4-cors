@@ -72,8 +72,11 @@ class BaseController extends Controller
 		// Make sure to send the header "X-Requested-With: XMLHttpRequest"
 		
 		if(
-			!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-			(strtoupper($_SERVER['HTTP_X_REQUESTED_WITH']) === 'XMLHTTPREQUEST')
+			empty($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+			(
+				!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+				(strtoupper($_SERVER['HTTP_X_REQUESTED_WITH']) === 'XMLHTTPREQUEST')
+			)
 		)
 		{
 			// Use CI headers management and send headers
