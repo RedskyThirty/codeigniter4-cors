@@ -46,9 +46,12 @@ class BaseController extends Controller
 		
 		// ---
 		
-		// Add the line below and both methods "cors()" and "_cors()"
+		// Add the lines below and both methods "cors()" and "_cors()"
 		
-		$this->_cors();
+		if (!is_cli())
+		{
+			$this->_cors();
+		}
 	}
 	
 	
